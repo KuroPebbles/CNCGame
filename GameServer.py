@@ -24,7 +24,7 @@ def GameThread():
     colorRect = (shapeColor)
     colorRect2 = (shapeColorOver)
     global posx 
-    global posy 
+    global posy
 
     #game loop
     while True:
@@ -35,8 +35,10 @@ def GameThread():
 
         screen.fill(background)
         rect1.center = (posx, posy)
+
         collision = rect1.colliderect(rect2)
         pygame.draw.rect(screen, colorRect, rect1)
+
         if collision:
             pygame.draw.rect(screen, colorRect2, rect2, 6, 1)
         else:
@@ -81,9 +83,9 @@ def ServerThread():
             posy -= 10
         if(data == 's'):
             posy += 10
-        if(data == 'a'):
+        if(data == 'a') and posx > 0: #Keep in the boundaries for x-axis
             posx -= 10
-        if(data == 'd'):
+        if(data == 'd') and posx < 600:  #Keep in the boundaries for x-axis
             posx += 10
     conn.close()  # close the connection
 
