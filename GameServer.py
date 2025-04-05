@@ -5,7 +5,9 @@ import sys
 
 name = "test"
 posx = 300
-posy = 200
+posy = 300
+
+#Variables For Scoreboard
 
 #Game
 def GameThread():
@@ -16,7 +18,7 @@ def GameThread():
     
     fps = pygame.time.Clock()
     screen_size = screen_width, screen_height = 600, 400
-    rect2 = pygame.Rect(0, 0, 75, 75)
+    rect2 = pygame.Rect(0, 0, 75, 75) #Basket
     rect1 = pygame.Rect(0, 0, 25, 25)
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Welcome to CCN games')
@@ -34,9 +36,9 @@ def GameThread():
                 sys.exit()
 
         screen.fill(background)
-        rect1.center = (posx, posy)
+        rect2.center = (posx, posy)
 
-        collision = rect1.colliderect(rect2)
+        collision = rect2.colliderect(rect1)
         pygame.draw.rect(screen, colorRect, rect1)
 
         if collision:
@@ -79,13 +81,13 @@ def ServerThread():
             break
         
         print("from connected user: " + str(data))
-        if(data == 'w'):
+        if(data == 'w') and posy > 250:
             posy -= 10
-        if(data == 's'):
+        if(data == 's') and posy < 350:
             posy += 10
-        if(data == 'a') and posx > 0: #Keep in the boundaries for x-axis
+        if(data == 'a') and posx > 50: #Keep in the boundaries for x-axis
             posx -= 10
-        if(data == 'd') and posx < 600:  #Keep in the boundaries for x-axis
+        if(data == 'd') and posx < 550:  #Keep in the boundaries for x-axis
             posx += 10
     conn.close()  # close the connection
 
