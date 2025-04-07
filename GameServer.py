@@ -1,4 +1,5 @@
 import threading
+import random
 import pygame
 import socket
 import sys
@@ -9,12 +10,10 @@ posy = 300
 
 #Variables For Scoreboard
 score = 0
-add = 1
 
 #Speed
 rect2_speed = 10
 rect1_speed = 15
-speed = 10
 
 #Game
 def GameThread():
@@ -22,7 +21,8 @@ def GameThread():
     global posx 
     global posy
     global score
-    global add
+    global rect2_speed
+    global rect1_speed
 
     #Game window
     pygame.init()
@@ -52,19 +52,19 @@ def GameThread():
 
         collision = rect2.colliderect(rect1)
         pygame.draw.rect(screen, colorRect, rect1)
-
+        
         if collision:
-            score += add
-            rect2 += 10
-            rect1 += 10
+            score += 1
+            rect2_speed += 10
+            rect1_speed += 10
             pygame.draw.rect(screen, colorRect2, rect2, 6, 1)
         else:
             pygame.draw.rect(screen, colorRect, rect2, 6, 1)
+
         #Score Display
         font = pygame.font.SysFont(None, 36)
         text = font.render("Score: " + str(score), True, (0,0,0))
         screen.blit(text, (10, 10))
-
 
         fps.tick(60)
         pygame.display.update()
