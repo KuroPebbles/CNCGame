@@ -11,11 +11,6 @@ posy = 300
 score = 0
 add = 1
 
-#Speed
-rect2_speed = 10
-rect1_speed = 15
-speed = 10
-
 #Game
 def GameThread():
     #global variables
