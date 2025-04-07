@@ -11,10 +11,13 @@ posy = 300
 #Variables For Scoreboard
 score = 0
 
+<<<<<<< HEAD
 #Speed
 rect2_speed = 10
 rect1_speed = 15
 
+=======
+>>>>>>> 0f5d3261ee64a08d7b2cca5b6399f5bb1ce43605
 #Game
 def GameThread():
     #global variables
