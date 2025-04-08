@@ -31,6 +31,7 @@ last_spawn_time = 0
 game_start_time = 0
 restart_requested = False
 
+<<<<<<< HEAD
 # Lock for thread-safe access to shared variables
 game_lock = threading.Lock()
 
@@ -39,6 +40,26 @@ def reset_game():
     global bucket_x, bucket_y, game_score, game_over, objects
     global object_speed_multiplier, bucket_speed_multiplier, lives
     global last_spawn_time, game_start_time, restart_requested
+=======
+#Speed
+rect2_speed = 10
+rect1_speed = 15
+
+#Game
+def GameThread():
+    #global variables
+    global posx 
+    global posy
+    global score
+    global rect2_speed
+    global rect1_speed
+
+    #Game window
+    pygame.init()
+    background = (204, 230, 255)
+    shapeColor = (0, 51, 204)
+    shapeColorOver = (255, 0, 204)
+>>>>>>> 160ca77d397f0ffb0ab53a54ea3b53a6199c5733
     
     with game_lock:
         bucket_x = SCREEN_WIDTH // 2
