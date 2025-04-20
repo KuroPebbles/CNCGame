@@ -29,9 +29,10 @@ bucket_speed_multiplier = 1.0
 lives = MAX_LIVES
 last_spawn_time = 0
 game_start_time = 0
-restart_requested = False
 
-<<<<<<< HEAD
+restart_requested = False
+paused = False
+
 # Lock for thread-safe access to shared variables
 game_lock = threading.Lock()
 
@@ -40,26 +41,6 @@ def reset_game():
     global bucket_x, bucket_y, game_score, game_over, objects
     global object_speed_multiplier, bucket_speed_multiplier, lives
     global last_spawn_time, game_start_time, restart_requested
-=======
-#Speed
-rect2_speed = 10
-rect1_speed = 15
-
-#Game
-def GameThread():
-    #global variables
-    global posx 
-    global posy
-    global score
-    global rect2_speed
-    global rect1_speed
-
-    #Game window
-    pygame.init()
-    background = (204, 230, 255)
-    shapeColor = (0, 51, 204)
-    shapeColorOver = (255, 0, 204)
->>>>>>> 160ca77d397f0ffb0ab53a54ea3b53a6199c5733
     
     with game_lock:
         bucket_x = SCREEN_WIDTH // 2
@@ -83,26 +64,55 @@ def spawn_object():
 #Start Screen
 def play_screen(screen, font):
     while True:
-        screen.fill((0, 0, 0))
-        text = font.render("Press SPACE to Start", True, (255, 255, 255))
-        screen.blit(text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
+        screen.fill((135, 206, 235))
+        font = pygame.font.SysFont('Arial', 48, bold=True)
+        text = font.render("Press SPACE to Start", True, (0, 0, 0))
+        screen.blit(text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 30))
         pygame.display.flip()
 
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()  # Ensure proper exit
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    return  # Exit loop when SPACE is pressed
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()  # Ensure proper exit
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return  # Exit loop when SPACE is pressed
 
+#quit menu
+def quit(screen, font):
+    while True:
+        screen.fill((135, 206, 235))
+        font = pygame.font.SysFont('Arial', 48, bold=True)
+        text = font.render("Are you sure you want to quit?", True, (0, 0, 0))
+        screen.blit(text, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 200))
 
+        #Yes or No
+        yes = font.render("Press y for Yes", True, (0, 0, 0))
+        screen.blit(yes, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 100))
+
+        no = font.render("Press n for No", True, (0, 0, 0))
+        screen.blit(no, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
+
+        pygame.display.flip()
+
+        #Game Loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return "quit"
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_y:
+                    print("User quiting")
+                    return "restarting"
+                elif event.key == pygame.K_n:
+                    print("Resume game")
+                    return "resume"
 
 def GameThread():
     # """Main game thread that handles the pygame display and game logic."""
     global bucket_x, bucket_y, game_score, prv_score, high_score, game_over, objects
     global object_speed_multiplier, bucket_speed_multiplier, lives
-    global last_spawn_time, game_start_time, restart_requested
+    global last_spawn_time, game_start_time, restart_requested, paused
     
     pygame.init()
     pygame.font.init()
@@ -145,6 +155,15 @@ def GameThread():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            
+            elif paused:
+               action = quit(screen, font)
+               if action == "restarting":
+                   reset_game()
+                   play_screen(screen, font)
+                   paused = False
+               elif action == "resume":
+                   paused = False
         
         # Check for restart request
             if restart_requested:
@@ -237,7 +256,7 @@ def GameThread():
 
 def ServerThread():
     # """Server thread that handles client connections and processes input."""
-    global bucket_x, bucket_y, game_over, restart_requested
+    global bucket_x, bucket_y, game_over, restart_requested, paused
     
     # Get the hostname
     host = "127.0.0.1"  # Default to localhost
@@ -297,8 +316,8 @@ def ServerThread():
                             print(f"Restart requested: {restart_requested}")
                             restart_requested = True
                         elif data == 'q':  # Client quitting
-                            print(f"Client {address} disconnected")
-                            break
+                            print(f"Client {address} paused")
+                            paused = True
             
             except ConnectionResetError:
                 print(f"Connection with {address} was reset")

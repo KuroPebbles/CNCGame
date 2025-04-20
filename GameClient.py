@@ -6,7 +6,7 @@ import time
 def client_program():
     print("Bucket Catch Game - Client")
     print("Trying to connect to server...")
-    host = "10.12.51.41"  # Updated to match server's IP
+    host = "10.12.48.7"  # Updated to match server's IP
     port = 5000  # socket server port number
 
     client_socket = socket.socket()  # instantiate
