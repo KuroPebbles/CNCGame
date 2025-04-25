@@ -6,7 +6,7 @@ import time
 def client_program():
     print("Bucket Catch Game - Client")
     print("Trying to connect to server...")
-    host = "10.12.48.7"  # Updated to match server's IP
+    host = "192.168.68.50"  # Updated to match server's IP
     port = 5000  # socket server port number
 
     client_socket = socket.socket()  # instantiate
@@ -23,18 +23,34 @@ def client_program():
                 client_socket.send('q'.encode())
                 time.sleep(0.05)
                 
-            # Check for movement keys
-            if keyboard.is_pressed('a'):
-                client_socket.send('a'.encode())  # move left
-                time.sleep(0.05)  # Small delay to prevent flooding
-            if keyboard.is_pressed('d'):
-                client_socket.send('d'.encode())  # move right
-                time.sleep(0.05)
-            if keyboard.is_pressed('w'):
+            # Check for combined movement keys (diagonals)
+            # Using a more efficient approach to handle diagonals
+            up = keyboard.is_pressed('w')
+            down = keyboard.is_pressed('s')
+            left = keyboard.is_pressed('a')
+            right = keyboard.is_pressed('d')
+            
+            # Send combined movement commands
+            if up and left:
+                client_socket.send('ul'.encode())  # up-left diagonal
+            elif up and right:
+                client_socket.send('ur'.encode())  # up-right diagonal
+            elif down and left:
+                client_socket.send('dl'.encode())  # down-left diagonal
+            elif down and right:
+                client_socket.send('dr'.encode())  # down-right diagonal
+            # Single direction movements
+            elif up:
                 client_socket.send('w'.encode())  # move up
-                time.sleep(0.05)
-            if keyboard.is_pressed('s'):
+            elif down:
                 client_socket.send('s'.encode())  # move down
+            elif left:
+                client_socket.send('a'.encode())  # move left
+            elif right:
+                client_socket.send('d'.encode())  # move right
+                
+            # Add a small delay after any movement command
+            if up or down or left or right:
                 time.sleep(0.05)
 
             # Check for restart key
