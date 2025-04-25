@@ -414,20 +414,21 @@ def game_over_screen(screen, font, score):
 
 #quit menu
 def quit(screen, font):
+    global SCREEN_WIDTH, SCREEN_HEIGHT
+
+    screen.fill((135, 206, 235))
+    font = pygame.font.SysFont('Arial', 48, bold=True)
+    text = font.render("Are you sure you want to quit?", True, (0, 0, 0))
+    screen.blit(text, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 200))
+
+    #Yes or No button
+    yes_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50, 200, 60, "Yes")
+    no_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 50, 200, 70, "No")
+    
+
     while True:
-        screen.fill((135, 206, 235))
-        font = pygame.font.SysFont('Arial', 48, bold=True)
-        text = font.render("Are you sure you want to quit?", True, (0, 0, 0))
-        screen.blit(text, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 200))
-
-        #Yes or No
-        yes = font.render("Press y for Yes", True, (0, 0, 0))
-        screen.blit(yes, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 100))
-
-        no = font.render("Press n for No", True, (0, 0, 0))
-        screen.blit(no, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
-
-        pygame.display.flip()
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_clicked = False
 
         #Game Loop
         for event in pygame.event.get():
@@ -435,13 +436,44 @@ def quit(screen, font):
                 pygame.quit()
                 return "quit"
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left click
+                    mouse_clicked = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_y:
-                    print("User quiting")
+                    print("User quitting...")
                     return "restarting"
                 elif event.key == pygame.K_n:
-                    print("Resume game")
+                    print("Resuming game...")
                     return "resume"
+
+        yes_button.check_hover(mouse_pos)
+        no_button.check_hover(mouse_pos)
+
+        if yes_button.is_clicked(mouse_pos, mouse_clicked):
+            print("User quitting...")
+            return "restarting"
+        
+        if no_button.is_clicked(mouse_pos, mouse_clicked):
+            print("Resuming game...")
+            return "resume"
+
+        yes_button.draw(screen, font)
+        no_button.draw(screen, font)
+
+        # Add sub under Yes button
+        small_font = pygame.font.SysFont('Arial', 24)
+        press_y_text = small_font.render("or press Y", True, (0, 0, 0))
+        screen.blit(press_y_text, (SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 + 10))
+
+        #Subs under No button
+        press_n_text = small_font.render("or press N", True, (0, 0, 0))
+        screen.blit(press_n_text, (SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 + 120))
+
+        pygame.display.flip()
+        
+        pygame.time.delay(10)
+
 
 def GameThread():
     # """Main game thread that handles the pygame display and game logic."""
@@ -514,6 +546,7 @@ def GameThread():
                     action = quit(screen, font)
                     if action == "restarting":
                         reset_game()
+                        play_screen(screen, font)
                         paused = False
                     elif action == "resume":
                         paused = False
