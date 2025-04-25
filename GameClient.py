@@ -14,12 +14,12 @@ def client_program():
     try:
         client_socket.connect((host, port))  # connect to the server
         print("Connected to server!")
-        print("Controls: WASD to move bucket, Q to quit")
+        print("Controls: WASD to move bucket, Q to pause")
         
         while True:
             # Check for quit key
             if keyboard.is_pressed('q'):
-                print("Quitting game...")
+                print("Pausing the game...")
                 client_socket.send('q'.encode())
                 time.sleep(0.05)
                 
